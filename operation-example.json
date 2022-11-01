@@ -1,0 +1,14 @@
+{
+    "operator": {
+        "user_id": "xxx-xxx",
+        "mixin_number": "123456"
+    },
+    "notification": {
+        "error": {
+            "conversation_id": "yyy-yyy"
+        },
+        "info": {
+            "conversation_id": "zzz-zzz"
+        }
+    }
+}

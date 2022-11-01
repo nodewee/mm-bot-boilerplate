@@ -1,0 +1,2 @@
+memoization>=0.4.0
+mixinsdk @ https://github.com/nodewee/mixin-sdk-python/releases/download/v0.2.1/mixinsdk-0.2.1-py3-none-any.whl
