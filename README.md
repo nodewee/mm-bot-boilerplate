@@ -19,7 +19,7 @@ python3 -m pip install -r requirements.txt
 
 - Or use [pdm](https://github.com/pdm-project/pdm)
   
-  `pdm install`
+  `pdm add`
 
 3. Run bot
 
