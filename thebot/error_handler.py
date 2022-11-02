@@ -1,8 +1,5 @@
-import logging
-import traceback
+from thebot.my_bot import MyBot
 
 
-def handle(blaze, error):
-    logging.error(error, exc_info=True)
-    print(error)
-    print(traceback.format_exc())
+def handle(bot: MyBot, error):
+    bot.logger.error(error, exc_info=True)

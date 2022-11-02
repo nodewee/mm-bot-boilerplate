@@ -1,5 +1,6 @@
+import json
 import logging
-import os, json
+import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -47,7 +48,6 @@ def init_logger(bot_slug: str):
 from thebot import error_handler, message_handler
 from thebot.my_bot import MyBot
 
-
 # Initialize
 slug = "mmbot"
 
@@ -58,7 +58,7 @@ bot = MyBot(
     operation_config_file="../config/operation.json",
     message_handle=message_handler.handle,
     error_handle=error_handler.handle,
-    logger=init_logger(slug)
+    logger=init_logger(slug),
 )
 bot.refresh_my_profile()
 print("current bot:", bot.profile.user_id)

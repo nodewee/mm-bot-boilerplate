@@ -30,8 +30,6 @@ class MixinMessageUser:
         self.mm_addr_uid = None
 
 
-
-
 class OperationObject:
     def __init__(self):
         self.operator_user_id: str = None

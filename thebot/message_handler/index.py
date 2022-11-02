@@ -1,14 +1,15 @@
-import logging
-
 from mixinsdk.types.message import MESSAGE_CATEGORIES, MessageView
 
+from thebot import cache
 from thebot.my_bot import MyBot
 from thebot.types import MM_ADDR_TYPES, MessageHandlerContext, MixinMessageUser
-from thebot import cache
+
 from . import handle_conversation_actions, handle_media, handle_text, handle_transfer
 
 
 def handle(bot: MyBot, message):
+    logger = bot.logger
+
     action = message["action"]
 
     if action == "ACKNOWLEDGE_MESSAGE_RECEIPT":
@@ -20,8 +21,8 @@ def handle(bot: MyBot, message):
         return
 
     if action == "ERROR":
-        logging.warn("--- received error action ---")
-        logging.warn(message)
+        logger.warn("--- received error action ---")
+        logger.warn(message)
         return
         """example message={
             "id": "00000000-0000-0000-0000-000000000000",
@@ -36,8 +37,8 @@ def handle(bot: MyBot, message):
     if action == "CREATE_MESSAGE":
         error = message.get("error")
         if error:
-            logging.warn("--- received error message ---")
-            logging.warn(message)
+            logger.warn("--- received error message ---")
+            logger.warn(message)
             return
 
         # parse message
@@ -54,8 +55,8 @@ def handle(bot: MyBot, message):
         if msgview.type == "message":
             # From system message
             if msgview.user_id == "00000000-0000-0000-0000-000000000000":
-                logging.debug("received system message")
-                logging.debug(msgview.to_dict())
+                logger.debug("received system message")
+                logger.debug(msgview.to_dict())
 
                 if msgview.category == MESSAGE_CATEGORIES.SYSTEM_CONVERSATION:
                     handle_conversation_actions.handler(bot, msgview)
@@ -67,12 +68,12 @@ def handle(bot: MyBot, message):
                     bot.blaze.echo(msgview.message_id)
                     return
 
-                logging.warn(f"unknown system message category: {msgview.category}")
+                logger.warn(f"unknown system message category: {msgview.category}")
                 return
 
             # Ignore: MESSAGE_CATEGORIES.MESSAGE_RECALL
             if msgview.category == MESSAGE_CATEGORIES.MESSAGE_RECALL:
-                logging.debug("received message recall, ignore it")
+                logger.debug("received message recall, ignore it")
                 bot.blaze.echo(msgview.message_id)
                 return
 
@@ -96,7 +97,7 @@ def handle(bot: MyBot, message):
             log += f"\n\tFrom: {msguser.user_type} - {msguser.user_id}"
             if msguser.is_in_group:
                 log += f", In group: {msguser.conversation_id}"
-            logging.info(log)
+            logger.info(log)
 
             ctx = MessageHandlerContext(msguser, msgview)
 
@@ -111,13 +112,13 @@ def handle(bot: MyBot, message):
                         for msg in ctx.replying_msgs:
                             bot.blaze.send_message(msg)
                     else:
-                        logging.debug(
+                        logger.debug(
                             f"user addr type is {msguser.mm_addr_type}, so ignore to reply message"
                         )
 
                     bot.blaze.echo(msgview.message_id)
                 except Exception as e:
-                    logging.exception("at snapshot message", exc_info=True)
+                    logger.exception("at snapshot message", exc_info=True)
                     raise e from None
                 return
 
@@ -132,7 +133,7 @@ def handle(bot: MyBot, message):
                         bot.blaze.send_message(msg)
                     bot.blaze.echo(msgview.message_id)
                 except Exception as e:
-                    logging.exception("at text message", exc_info=True)
+                    logger.exception("at text message", exc_info=True)
                     raise e from None
                 return
 
@@ -171,18 +172,18 @@ def handle(bot: MyBot, message):
                         bot.blaze.send_message(msg)
                     bot.blaze.echo(msgview.message_id)
                 except Exception as e:
-                    logging.exception("at text message", exc_info=True)
+                    logger.exception("at text message", exc_info=True)
                     raise e from None
                 return
 
             msg = f"Unknown/Ignore message category: {message}"
-            logging.warn(msg)
+            logger.warn(msg)
             bot.notify_operator_info(msg)
             bot.blaze.echo(msgview.message_id)
             return
 
     msg = f"Unknown message: {message}"
-    logging.warn(msg)
+    logger.warn(msg)
     bot.notify_operator_info(msg)
 
 

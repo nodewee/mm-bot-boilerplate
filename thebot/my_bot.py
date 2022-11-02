@@ -1,4 +1,4 @@
-
+import logging
 
 from mixinsdk.clients.client_blaze import BlazeClient
 from mixinsdk.clients.client_http import HttpClient_WithAppConfig
@@ -31,15 +31,13 @@ class MyBot:
         slug: str = "bot",
         message_handle: callable = None,
         error_handle: callable = None,
-        logger=None,
-        # more customize properties
-        spore_config_file: str = None,
+        logger: logging.Logger = None,
     ):
 
         self.config = AppConfig.from_file(mixin_config_file)
         self.noauth = HttpClient_WithoutAuth()
         self.http = HttpClient_WithAppConfig(self.config)
-        self.logger = logger
+        self.logger = logger if logger else logging.getLogger("my-bot")
 
         def _blaze_on_message(blaze, message):
             message_handle(self, message)
