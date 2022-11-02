@@ -99,11 +99,12 @@ def handle(bot: MyBot, message):
                 log += f", In group: {msguser.conversation_id}"
             logger.info(log)
 
+            # CONTEXT
             ctx = MessageHandlerContext(msguser, msgview)
 
             if msgview.category == MESSAGE_CATEGORIES.SYSTEM_ACCOUNT_SNAPSHOT:
                 try:
-                    handle_transfer.handler(bot, ctx, msguser, msgview)
+                    handle_transfer.handler(bot, ctx)
                     # reply to user (if have responding messages)
                     if msguser.mm_addr_type in [
                         MM_ADDR_TYPES.MIXIN_USER,
@@ -127,7 +128,7 @@ def handle(bot: MyBot, message):
                 MESSAGE_CATEGORIES.ENCRYPTED_TEXT,
             ]:
                 try:
-                    handle_text.handler(bot, ctx, msguser, msgview)
+                    handle_text.handler(bot, ctx)
                     # reply to user (if have responding messages)
                     for msg in ctx.replying_msgs:
                         bot.blaze.send_message(msg)
@@ -141,7 +142,7 @@ def handle(bot: MyBot, message):
                 MESSAGE_CATEGORIES.PLAIN_POST,
                 MESSAGE_CATEGORIES.ENCRYPTED_POST,
             ]:
-                handle_post(bot.blaze, ctx, msguser, msgview)
+                handle_post(bot.blaze, ctx)
                 # reply to user (if have responding messages)
                 for msg in ctx.replying_msgs:
                     bot.blaze.send_message(msg)
@@ -166,7 +167,7 @@ def handle(bot: MyBot, message):
             ]:
 
                 try:
-                    handle_media.handler(bot, ctx, msguser, msgview)
+                    handle_media.handler(bot, ctx)
                     # reply to user (if have responding messages)
                     for msg in ctx.replying_msgs:
                         bot.blaze.send_message(msg)
@@ -187,10 +188,5 @@ def handle(bot: MyBot, message):
     bot.notify_operator_info(msg)
 
 
-def handle_post(
-    bot: MyBot,
-    ctx: MessageHandlerContext,
-    msguser: MixinMessageUser,
-    msgview: MessageView,
-):
+def handle_post(bot: MyBot, ctx: MessageHandlerContext):
     pass
